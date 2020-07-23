@@ -1,0 +1,2 @@
+# Šablon novog projekta
+

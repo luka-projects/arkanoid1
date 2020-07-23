@@ -1,0 +1,66 @@
+{
+  "env": {
+    "browser": true,
+    "es6": true,
+    "jest": true,
+    "node": true
+  },
+  "extends": [
+    "eslint:recommended",
+    "standard"
+  ],
+  "globals": {
+    "window": true,
+    "document": true
+  },
+  "rules": {
+    "indent": [
+      "error",
+      2
+    ],
+    "linebreak-style": [
+      "error",
+      "unix"
+    ],
+    "quotes": [
+      "error",
+      "single"
+    ],
+    "jsx-quotes": [
+      "error",
+      "prefer-double"
+    ],
+    "semi": [
+      "error",
+      "never"
+    ],
+    "prefer-const": "error",
+    "max-len": [
+      "error",
+      {
+        "code": 160
+      }
+    ],
+    "no-console": [
+      "error",
+      {
+        "allow": [
+          "warn",
+          "error"
+        ]
+      }
+    ],
+    "import/newline-after-import": "error",
+    "import/no-unresolved": "error"
+  },
+  "settings": {
+    "import/resolver": {
+      "alias": {
+        "map": [
+          ["@/components", "./src/components"]
+        ],
+        "extensions": [".js", ".jsx", ".json"]
+      }
+    }
+  }
+}
