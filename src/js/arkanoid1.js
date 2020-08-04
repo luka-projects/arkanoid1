@@ -3,7 +3,7 @@ let context = canvas.getContext('2d')
 let ballPositionX = canvas.width / 2 // Ball's X position
 let ballPositionY = canvas.height - 50 // Ball's Y position on canvas
 
-
+let score = 0
 let lives = 3
 
 // ball
@@ -21,6 +21,7 @@ let batX = (canvas.width - batWidth) / 2
 let batY = canvas.height - 35
 let rightArrowPressed = false
 let leftArrowPressed = false
+let spacePressed = false
 
 //bricks
 
@@ -98,8 +99,19 @@ function ballCanvasCollision() {
     ballMoveY = - ballMoveY
 
   } else if (bottomSideCanvas) {
-    // ballMoveY = -ballMoveY
-    livesChange(-1)
+    lives--
+    if (lives === 0) {
+      gameOver()
+    } else { // starting canvas positions of ball and bat
+      ballPositionX = canvas.width / 2
+      ballPositionY = canvas.height - 50
+
+      // loptica se rola po bat, ne znam sto za sada
+
+
+      batX = (canvas.width - batWidth) / 2
+      batY = (canvas.height - 50)
+    }
   }
 }
 function ballBatCollision() {
@@ -120,6 +132,7 @@ function ballBrickCollision() {
         if (ballPositionX > brickPositionX - ballRadius && ballPositionX < brickPositionX + brickWidth && ballPositionY > brickPositionY - ballRadius && ballPositionY < brickPositionY + brickHeight) {
           ballMoveY = -ballMoveY
           b.status = 0
+          score++
         }
       }
     }
@@ -127,10 +140,18 @@ function ballBrickCollision() {
 }
 
 
-function livesChange(num) {
-  lives += num
-  if (lives === 0) gameOver()
+
+function drawScore () {
+  context.font = '18px Times New Roman'
+  context.fillStyle = '#000000'
+  context.fillText('Score is: '+score, 10, 20)
 }
+function drawLives () {
+  context.font = '18px Times New Roman'
+  context.fillStyle = '#000000'
+  context.fillText ('Lives: '+lives, canvas.width - 70, 20)
+}
+
 function gameOver() {
   alert(`Game over, you don't have anymore lives.`)
   document.location.reload()
@@ -145,12 +166,36 @@ function draw() {
   ballCanvasCollision()
   ballBatCollision()
   ballBrickCollision()
+  drawScore()
+  drawLives()
   ballPositionX += ballMoveX
   ballPositionY += ballMoveY
 }
 
 document.addEventListener('keydown', keyDown, false)
 document.addEventListener('keyup', keyUp, false)
+
+document.addEventListener('keydown',spaceKeyDown, false)
+document.addEventListener('keyup',spaceKeyUp,false)
+
+function spaceKeyDown(event) {
+  if (event.key == ' ' || event.key == 'Spacebar') {
+    spacePressed = true
+    ballPositionX = canvas.width / 2
+    ballPositionY = canvas.height - 50
+
+    ballMoveY = - ballMoveY
+
+    batX = (canvas.width - batWidth) / 2
+    batY = (canvas.height - 50)
+  }
+}
+function spaceKeyUp(event) {
+  if (event.key == ' ' || event.key == 'Spacebar') {
+    spacePressed = false
+  }
+}
+
 
 function keyDown(event) {
   if (event.key == 'ArrowRight') {
