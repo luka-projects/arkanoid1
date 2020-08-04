@@ -22,7 +22,41 @@ let batY = canvas.height - 35
 let rightArrowPressed = false
 let leftArrowPressed = false
 
+//bricks
 
+let brickWidth = 70
+let brickHeight = 20
+let brickRows = 5
+let brickColumns = 8
+let brickPadding = 12
+let brickOffsetTop = 40
+let brickOffsetLeft = 25
+
+let bricks = []
+for (let i = 0; i < brickColumns; i++) {
+  bricks[i] = []
+  for (let j = 0; j < brickRows; j++) {
+    bricks[i][j] = { x: 0, y: 0, status: 1 }
+  }
+}
+
+function drawBricks() {
+  for (let i = 0; i < brickColumns; i++) {
+    for (let j = 0; j < brickRows; j++) {
+      if (bricks[i][j].status == 1) {
+        let brickPositionX = (i * (brickWidth + brickPadding)) + brickOffsetLeft
+        let brickPositionY = (j * (brickHeight + brickPadding)) + brickOffsetTop
+        bricks[i][j].x = brickPositionX
+        bricks[i][j].y = brickPositionY
+        context.beginPath()
+        context.rect(brickPositionX, brickPositionY, brickWidth, brickHeight)
+        context.fillStyle = '#FFD700'
+        context.fill()
+        context.closePath()
+      }
+    }
+  }
+}
 
 function drawBall() {
   context.beginPath()
@@ -76,6 +110,21 @@ function ballBatCollision() {
   }
 }
 
+function ballBrickCollision() {
+  for (let i = 0; i < brickColumns; i++) {
+    for (let j = 0; j < brickRows; j++) {
+      let b = bricks[i][j]
+      let brickPositionX = b.x
+      let brickPositionY = b.y
+      if (b.status == 1) {
+        if (ballPositionX > brickPositionX - ballRadius && ballPositionX < brickPositionX + brickWidth && ballPositionY > brickPositionY - ballRadius && ballPositionY < brickPositionY + brickHeight) {
+          ballMoveY = -ballMoveY
+          b.status = 0
+        }
+      }
+    }
+  }
+}
 
 
 function livesChange(num) {
@@ -89,11 +138,13 @@ function gameOver() {
 }
 function draw() {
   context.clearRect(0, 0, canvas.width, canvas.height)
+  drawBricks()
   drawBall()
   drawBat()
   batMove()
   ballCanvasCollision()
   ballBatCollision()
+  ballBrickCollision()
   ballPositionX += ballMoveX
   ballPositionY += ballMoveY
 }
