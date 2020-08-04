@@ -71,11 +71,7 @@ function ballCanvasCollision() {
 function ballBatCollision() {
   if (ballPositionY + ballMoveY > batY - ballRadius) {
     if (ballPositionX + ballRadius > batX && ballPositionX - ballRadius < batX + batWidth) {
-      if (ballPositionY = ballPositionY - batHeight) {
-        // ballAngle = ((batWidth/2 + batX) - x) * 0.02
-        // ballMoveX = ballMoveX + ballAngle
-        ballMoveY = - ballMoveY
-      }
+      ballMoveY = -ballMoveY
     }
   }
 }
