@@ -7,12 +7,12 @@ let score = 0
 let lives = 3
 
 // ball
-
-let ballMoveX = 3
-let ballMoveY = -3
-let ballRadius = 10
-let ballAngle = 0
-
+let ball = {
+  ballMoveX: 3,
+  ballMoveY: -3,
+  ballRadius: 10,
+  ballAngle: 0
+}
 //bat
 
 let batWidth = 90
@@ -61,7 +61,7 @@ function drawBricks() {
 
 function drawBall() {
   context.beginPath()
-  context.arc(ballPositionX, ballPositionY, ballRadius, 0, Math.PI * 2)
+  context.arc(ballPositionX, ballPositionY, ball.ballRadius, 0, Math.PI * 2)
   context.fillStyle = '#FF0000'
   context.fill()
   context.closePath()
@@ -86,17 +86,20 @@ function batMove() {
     }
   }
 }
+
+// Collisions
+
 function ballCanvasCollision() {
-  let leftSideCanvas = ballPositionX + ballMoveX < ballRadius
-  let rightSideCanvas = ballPositionX + ballMoveX > canvas.width - ballRadius
-  let topSideCanvas = ballPositionY + ballMoveY < ballRadius
-  let bottomSideCanvas = ballPositionY + ballMoveY > canvas.height - ballRadius
+  let leftSideCanvas = ballPositionX + ball.ballMoveX < ball.ballRadius
+  let rightSideCanvas = ballPositionX + ball.ballMoveX > canvas.width - ball.ballRadius
+  let topSideCanvas = ballPositionY + ball.ballMoveY < ball.ballRadius
+  let bottomSideCanvas = ballPositionY + ball.ballMoveY > canvas.height - ball.ballRadius
 
   if (rightSideCanvas || leftSideCanvas) {
-    ballMoveX = - ballMoveX
+    ball.ballMoveX = - ball.ballMoveX
   }
   if (topSideCanvas) {
-    ballMoveY = - ballMoveY
+    ball.ballMoveY = - ball.ballMoveY
 
   } else if (bottomSideCanvas) {
     lives--
@@ -106,18 +109,15 @@ function ballCanvasCollision() {
       ballPositionX = canvas.width / 2
       ballPositionY = canvas.height - 50
 
-      // loptica se rola po bat, ne znam sto za sada
-
-
-      batX = (canvas.width - batWidth) / 2
-      batY = (canvas.height - 50)
+      // ???
+      ball.ballMoveY = -ball.ballMoveY
     }
   }
 }
 function ballBatCollision() {
-  if (ballPositionY + ballMoveY > batY - ballRadius) {
-    if (ballPositionX + ballRadius > batX && ballPositionX - ballRadius < batX + batWidth) {
-      ballMoveY = -ballMoveY
+  if (ballPositionY + ball.ballMoveY > batY - ball.ballRadius) {
+    if (ballPositionX + ball.ballRadius > batX && ballPositionX - ball.ballRadius < batX + batWidth) {
+      ball.ballMoveY = -ball.ballMoveY
     }
   }
 }
@@ -129,8 +129,8 @@ function ballBrickCollision() {
       let brickPositionX = b.x
       let brickPositionY = b.y
       if (b.status == 1) {
-        if (ballPositionX > brickPositionX - ballRadius && ballPositionX < brickPositionX + brickWidth && ballPositionY > brickPositionY - ballRadius && ballPositionY < brickPositionY + brickHeight) {
-          ballMoveY = -ballMoveY
+        if (ballPositionX - ball.ballRadius > brickPositionX  && ballPositionX - ball.ballRadius < brickPositionX + brickWidth && ballPositionY - ball.ballRadius> brickPositionY  && ballPositionY - ball.ballRadius< brickPositionY + brickHeight) {
+          ball.ballMoveY = -ball.ballMoveY
           b.status = 0
           score++
         }
@@ -141,21 +141,20 @@ function ballBrickCollision() {
 
 
 
-function drawScore () {
+function drawScore() {
   context.font = '18px Times New Roman'
   context.fillStyle = '#000000'
-  context.fillText('Score is: '+score, 10, 20)
+  context.fillText('Score is: ' + score, 10, 20)
 }
-function drawLives () {
+function drawLives() {
   context.font = '18px Times New Roman'
   context.fillStyle = '#000000'
-  context.fillText ('Lives: '+lives, canvas.width - 70, 20)
+  context.fillText('Lives: ' + lives, canvas.width - 70, 20)
 }
 
 function gameOver() {
   alert(`Game over, you don't have anymore lives.`)
   document.location.reload()
-  clearInterval(interval)
 }
 function draw() {
   context.clearRect(0, 0, canvas.width, canvas.height)
@@ -168,15 +167,17 @@ function draw() {
   ballBrickCollision()
   drawScore()
   drawLives()
-  ballPositionX += ballMoveX
-  ballPositionY += ballMoveY
+  ballPositionX += ball.ballMoveX
+  ballPositionY += ball.ballMoveY
+
+  requestAnimationFrame(draw)
 }
 
 document.addEventListener('keydown', keyDown, false)
 document.addEventListener('keyup', keyUp, false)
 
-document.addEventListener('keydown',spaceKeyDown, false)
-document.addEventListener('keyup',spaceKeyUp,false)
+document.addEventListener('keydown', spaceKeyDown, false)
+document.addEventListener('keyup', spaceKeyUp, false)
 
 function spaceKeyDown(event) {
   if (event.key == ' ' || event.key == 'Spacebar') {
@@ -184,7 +185,7 @@ function spaceKeyDown(event) {
     ballPositionX = canvas.width / 2
     ballPositionY = canvas.height - 50
 
-    ballMoveY = - ballMoveY
+    ball.ballMoveY = - ball.ballMoveY
 
     batX = (canvas.width - batWidth) / 2
     batY = (canvas.height - 50)
@@ -211,6 +212,7 @@ function keyUp(event) {
     leftArrowPressed = false
   }
 }
-let interval = setInterval(draw, 10)
+draw()
+
 
 
